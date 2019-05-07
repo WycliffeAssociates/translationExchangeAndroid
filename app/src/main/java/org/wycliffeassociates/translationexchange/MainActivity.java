@@ -51,6 +51,7 @@ public class MainActivity extends Activity {
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
         webSettings.setDomStorageEnabled(true);
+        webSettings.setUserAgentString(webSettings.getUserAgentString() + " TranslationExchangeClient");
 
         webView.loadUrl("file:///android_asset/build/index.html");
     }
