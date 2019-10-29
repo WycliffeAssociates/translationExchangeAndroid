@@ -1,4 +1,4 @@
-package org.wycliffeassociates.translationexchange;
+package bible.translationtools.exchanger;
 
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
