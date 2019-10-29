@@ -1,12 +1,12 @@
 package org.wycliffeassociates.translationexchange;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
+import android.support.v4.app.FragmentActivity;
 import android.webkit.PermissionRequest;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
@@ -51,7 +51,7 @@ public class ChromeBrowser extends WebChromeClient {
     protected void handleUploadMessages(int resultCode, Intent intent) {
         Uri[] results = null;
         try {
-            if (resultCode != Activity.RESULT_OK) {
+            if (resultCode != FragmentActivity.RESULT_OK) {
                 results = null;
             } else {
                 if (intent != null) {

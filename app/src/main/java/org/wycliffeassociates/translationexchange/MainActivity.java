@@ -1,18 +1,22 @@
 package org.wycliffeassociates.translationexchange;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.webkit.DownloadListener;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Toast;
 
-public class MainActivity extends Activity {
+public class MainActivity extends FragmentActivity {
 
     private WebView webView;
     private ChromeBrowser browser;
@@ -21,6 +25,18 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        if (!hasPermission()) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                requestPermissions(
+                        new String[] {
+                                android.Manifest.permission.RECORD_AUDIO,
+                                android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+                        },
+                        1
+                );
+            }
+        }
 
         setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
@@ -35,6 +51,7 @@ public class MainActivity extends Activity {
         browser = new ChromeBrowser(MainActivity.this);
         webView = findViewById(R.id.web_view);
 
+        webView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
         webView.setWebViewClient(new WebViewClient());
         webView.setWebChromeClient(browser);
         webView.setDownloadListener(new DownloadListener() {
@@ -51,6 +68,9 @@ public class MainActivity extends Activity {
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
         webSettings.setDomStorageEnabled(true);
+        webSettings.setAllowUniversalAccessFromFileURLs(true);
+        webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
+        webSettings.setAppCacheEnabled(false);
         webSettings.setUserAgentString(webSettings.getUserAgentString() + " TranslationExchangeClient");
 
         webView.loadUrl("file:///android_asset/build/index.html");
@@ -75,6 +95,18 @@ public class MainActivity extends Activity {
         }
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        if(requestCode == 1) {
+            for (int result: grantResults) {
+                if(result != PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(getApplicationContext(), R.string.grant_permission, Toast.LENGTH_LONG).show();
+                }
+            }
+        }
+    }
+
     private void hideSystemUI() {
         View decorView = getWindow().getDecorView();
         decorView.setSystemUiVisibility(
@@ -87,6 +119,13 @@ public class MainActivity extends Activity {
                         // Hide the nav bar and status bar
                         | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_FULLSCREEN);
+    }
+
+    private boolean hasPermission() {
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            return false;
+        }
+        return true;
     }
 }
 
