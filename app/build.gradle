@@ -4,7 +4,7 @@ android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "bible.translationtools.exchanger"
-        minSdkVersion 23
+        minSdkVersion 21
         targetSdkVersion 28
         versionCode 18
         versionName "1.1.8"
